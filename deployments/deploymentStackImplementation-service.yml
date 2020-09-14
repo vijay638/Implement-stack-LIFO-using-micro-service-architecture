@@ -1,0 +1,43 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: stack-implementation-service
+  labels:
+    name: stack-implementation-service
+spec:
+  ports:
+    - nodePort: 30163
+      port: 8081
+      targetPort: 8081
+      protocol: TCP
+  selector:
+    app: stack-implementation-service
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stack-implementation-service
+spec:
+  selector:
+    matchLabels:
+      app: stack-implementation-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: stack-implementation-service
+    spec:
+      containers:
+        - name: stack-implementation-service
+          image: myimagesdocker/jellyfish:1.5.0   # docker image for StackImplementation-service
+          ports:
+            - containerPort: 8081
+          env:   # Setting Enviornmental Variables
+            - name: STACK_PUSH_POP  # Setting Database host address from configMap
+              value : stack-push-pop-service.default.svc.cluster.local
+              #valueFrom:
+                #configMapKeyRef:
+                  #name: postgres-conf  # name of configMap
+                 # key: stackpushpopServie

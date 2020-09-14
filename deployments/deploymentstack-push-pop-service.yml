@@ -1,0 +1,58 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: stack-push-pop-service
+  labels:
+    name: stack-push-pop-service
+spec:
+  ports:
+    - nodePort: 30164
+      port: 8000
+      targetPort: 8000
+      protocol: TCP
+  selector:
+    app: stack-push-pop-service
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stack-push-pop-servic
+spec:
+  selector:
+    matchLabels:
+      app: stack-push-pop-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: stack-push-pop-service
+    spec:
+      containers:
+        - name: stack-push-pop-service
+          image: myimagesdocker/jellyfish:1.6.1  ## docker image for stack-push-pop-service
+          ports:
+            - containerPort: 8000
+          env:   # Setting Enviornmental Variables
+            - name: POSTGRES_HOST  # Setting Database host address from configMap
+              value : postgres.default.svc.cluster.local
+              #valueFrom:
+               # configMapKeyRef:
+                #  name: postgres-conf  # name of configMap
+                #  key: host
+#            - name: DB_NAME  # Setting Database name from configMap
+#              valueFrom:
+ #               configMapKeyRef:
+  #                name: postgres-conf
+ #                 key: name
+ #           - name: POSTGRES_USER  # Setting Database username from Secret
+ #             valueFrom:
+ #               secretKeyRef:
+ #                 name: postgres-credentials # Secret Name
+  #                key: postgres_user
+  #          - name: POSTGRES_PASSWORD # Setting Database password from Secret
+   #           valueFrom:
+   #             secretKeyRef:
+   #               name: postgres-credentials
+   #               key: postgres_password
