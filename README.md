@@ -18,7 +18,7 @@
 
 
 After deployement of services on minikube
-you should the apis as below
+you should hit the apis as below
 
 http://${minikube ip}:30163/StackImlementation/push/{data}
 http://${minikube ip}:30163/StackImlementation/pop
